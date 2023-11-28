@@ -41,11 +41,24 @@ def posDisque_edited(plateau, numdisque):
             if numdisque == x:
                 return plateau.index(i), i.index(x)    #retourne d'abord la n-tour, et ensuite la n-position dans la tour
 
+def verifDepl(plateau, nt1, nt2):
+    taille=plateau[nt1-1][len(plateau[nt1-1])-1]
+    if plateau[nt2-1]==[]:
+        return True
+    elif plateau[nt2-1][len(plateau[nt2-1])-1]>taille:
+        return True
+    else:
+        return False
+
+def verifVictoire(plateau,n):
+    return plateau[2]==[i for i in range(n,0,-1)]
+
+
+
+
 #Partie 2
 import turtle
-turtle.speed(100)
-plateau=[[3,2,1],[],[]]
-t=turtle.Screen()
+turtle.speed(10)
     
 # Fonction pour dessiner le plateau avec trois tours
 def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus larges mais c'est plus chiant pour les tracer et pour la suite
@@ -83,40 +96,97 @@ def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus l
     turtle.hideturtle()
 
 # Sous fonction pour obtenir l'emplacement du disque dans la liste
-def trouver_emplacement(element, plateau):
-    for index, sous_liste in enumerate(plateau):
-        if element in sous_liste:
-            return [index , sous_liste.index(element)] # Renvoie l'indice de la sous-liste où l'élément est présent
-    return None  # Renvoie None si l'élément n'est pas trouvé dans le plateau
+##def trouver_emplacement(element, plateau):
+##    for index, sous_liste in enumerate(plateau):
+##        if element in sous_liste:
+##            return [index , sous_liste.index(element)] # Renvoie l'indice de la sous-liste où l'élément est présent
+##    return None  # Renvoie None si l'élément n'est pas trouvé dans le plateau""
 
 #Fonction pour tracer le disque (ça marche pas à partir de turtle)
+
+
+#fonction auxilière pour tracer/effacer les disques
 def dessineDisque(nd, plateau, n):
     #Dimension plateau
     largeur_plateau = 40+30*n
     hauteur_plateau = 20
     hauteur_tour = 20*n+30
-    
+    #trouver emplacement du disque dans la liste
+    PosD=[0,0]
+    for i in range(len(plateau)):
+        for j in range(len(plateau[i])):
+            if plateau[i][j]==nd:
+                PosD=[i,j]
     #Tracer un disque
     longueur_disque = nd*10
     hauteur_disque = 20
-    i=trouver_emplacement(nd,plateau)
-    print(i)
-    xdisque = (largeur_plateau / 6) + i[0] * (largeur_plateau / 3)
-    ydisque = hauteur_plateau+hauteur_plateau*i[1]
-    
+    xdisque = (largeur_plateau / 6) + PosD[0] * (largeur_plateau / 3)
+    ydisque = hauteur_plateau+hauteur_plateau*PosD[1]
     turtle.penup()
     turtle.goto(xdisque,ydisque)
-    turtle.pendown()
     turtle.forward(longueur_disque/2)
     turtle.left(90)
+    turtle.pendown()
     turtle.forward(hauteur_disque)
     turtle.left(90)
     turtle.forward(longueur_disque)
     turtle.left(90)
     turtle.forward(hauteur_disque)
     turtle.left(90)
-    turtle.forward(longueur_disque/2)
   #Les autre choses demandées dans la partie 2 dépendent de la fonction qui marche pas donc j'ai pas pus faire
+
+def effaceDisque(nd,plateau,n):
+        #Dimension plateau
+    largeur_plateau = 40+30*n
+    hauteur_plateau = 20
+    hauteur_tour = 20*n+30
+    #trouver emplacement du disque dans la liste
+    PosD=[0,0]
+    for i in range(len(plateau)):
+        for j in range(len(plateau[i])):
+            if plateau[i][j]==nd:
+                PosD=[i,j]
+    #Tracer un disque
+    longueur_disque = nd*10
+    hauteur_disque = 20
+    xdisque = (largeur_plateau / 6) + PosD[0] * (largeur_plateau / 3)
+    ydisque = hauteur_plateau+hauteur_plateau*PosD[1]
+    
+    turtle.pencolor("white")
+    turtle.penup()
+    turtle.goto(xdisque,ydisque+1)
+    turtle.forward(longueur_disque/2)
+    turtle.left(90)
+    turtle.pendown()
+    turtle.forward(hauteur_disque-1)
+    turtle.left(90)
+    turtle.forward(longueur_disque)
+    turtle.left(90)
+    turtle.forward(hauteur_disque)
+    turtle.left(90)
+    turtle.pencolor("black")
+    turtle.penup()
+    turtle.goto(xdisque,ydisque)
+    turtle.pendown()
+    turtle.goto(xdisque,ydisque+22)
+
+
+def dessineConfig(plateau,n):
+    for i in range(n):
+        dessineDisque(i+1,plateau,n)
+
+def effaceTout(plateau,n):
+    for i in range(n):
+        effaceDisque(i+1,plateau,n)
+
+
+plateau=[[3,2,1],[],[]]
+dessinePlateau(3)
+dessineConfig(plateau,3)
+print(verifVictoire(plateau,3))
+effaceTout(plateau,3)
+
+  
 #Partie C
 
 #Fonction qui initialise l'emplacement des disques de départs et d'arrivé (j'ai pas pus tester pck j'arrive pas à tracer les disques
@@ -143,8 +213,4 @@ def lireCoords(plateau):
         return tour_depart , tour_arrivee 
 
 
-dessinePlateau(3)
-dessineDisque(3,plateau,3)
-dessineDisque(2,plateau,3)
-dessineDisque(1,plateau,3)
 turtle.mainloop()
