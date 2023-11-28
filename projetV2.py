@@ -180,12 +180,6 @@ def effaceTout(plateau,n):
         effaceDisque(i+1,plateau,n)
 
 
-plateau=[[3,2,1],[],[]]
-dessinePlateau(3)
-dessineConfig(plateau,3)
-print(verifVictoire(plateau,3))
-effaceTout(plateau,3)
-
   
 #Partie C
 
@@ -194,23 +188,54 @@ def lireCoords(plateau):
     while True:
         # Demande le numéro de la tour de départ
         tour_depart = -1
-        while tour_depart not in range(1, 4) or len(plateau[tour_depart - 1]) == 0:
+        while tour_depart not in [1,2,3] or len(plateau[tour_depart - 1]) == 0:
             tour_depart = int(input("Entrez le numéro de la tour de départ (1, 2, 3) : "))
-            if tour_depart not in range(1, 4):
+            if tour_depart not in [1,2,3]:
                 print("Le numéro de la tour doit être entre 1 et 3.")
             elif len(plateau[tour_depart - 1]) == 0:
                 print("La tour de départ est vide. Choisissez une autre tour.")
 
         # Demande le numéro de la tour d'arrivée
-        tour_arrivee = -1
-        while tour_arrivee not in range(1, 4) or (len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]):
+        tour_arrivee = int()
+        flag=True
+        while flag:
             tour_arrivee = int(input("Entrez le numéro de la tour d'arrivée (1, 2, 3) : "))
-            if tour_arrivee not in range(1, 4):
+            if plateau[tour_arrivee-1]==[]:
+                flag = False
+            elif plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
+                flag = True
+            elif tour_arrivee in [1,2,3]:
+                flag = False
+            
+            if tour_arrivee not in [1,2,3]:
                 print("Le numéro de la tour doit être entre 1 et 3.")
             elif len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
                 print("Le disque sélectionné ne peut pas être placé sur cette tour. Choisissez une autre tour.")
 
-        return tour_depart , tour_arrivee 
+        return tour_depart-1 , tour_arrivee-1
+
+
+def jouerUnCoup(plateau,n):
+    tour_depart,tour_arrivee=lireCoords(plateau)
+    effaceDisque(plateau[tour_depart][-1],plateau,n)
+    
+    plateau[tour_arrivee].append(plateau[tour_depart][-1])
+    plateau[tour_depart].pop()
+    
+    dessineDisque(plateau[tour_arrivee][-1], plateau, n)
+    
+    return plateau
+
+
+def boucleJeu(plateau,n):
+    nb_coup=0
+    dessinePlateau(n)
+    dessineConfig(plateau,n)
+    while not verifVictoire(plateau,n):
+        nb_coup+=1
+        jouerUnCoup(plateau,n)
+    print(f"Victoire en {nb_coup} coups")
+
 
 
 turtle.mainloop()
