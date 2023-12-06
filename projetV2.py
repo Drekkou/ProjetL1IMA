@@ -1,6 +1,6 @@
 
 
-def init(n: int):
+def init(n):
     """Recoit en argument un entier n (le nombre de disques), et qui renvoie la liste représentant la configuration initiale du plateau"""
     discs = []
     for i in range (n, 0, -1):
@@ -9,21 +9,21 @@ def init(n: int):
     return [discs, [], []]
 
 
-def nbDisques(plateau: list[list[int] | list], numtour: int):
+def nbDisques(plateau, numtour):
     """Renvoie le nombre de disques sur la tour indiquée"""
     if 0 < numtour > 2:
         return f"ERROR : Numtour must be between 0 and 2"
     return len(plateau[numtour])
 
 
-def disqueSup(plateau: list[list[int] | list], numtour: int):
+def disqueSup(plateau, numtour):
     """Renvoie le numéro du disque au sommet de la tour indiquée"""
     if not plateau[numtour] or len(plateau[numtour]) == 0:
         return -1
     return plateau[numtour][len(plateau[numtour]) - 1]
 
 
-def posDisque(plateau: list[list[int] | list], numdisque: int):
+def posDisque(plateau, numdisque):
     """Renvoie le numéro de la tour sur laquelle se trouve un disque"""
     if numdisque in plateau[0]:
         return 0
@@ -68,14 +68,14 @@ def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus l
 
     # Dessiner le plateau
    
-    ##turtle.fillcolor("brown")
-    ##turtle.begin_fill()
+    turtle.fillcolor("gray")
+    turtle.begin_fill()
     for i in range(2):
         turtle.forward(largeur_plateau)
         turtle.left(90)
         turtle.forward(hauteur_plateau)
         turtle.left(90)
-    ##turtle.end_fill()
+    turtle.end_fill()
 
     # Dessiner les tours
     for i in range(3):
@@ -84,23 +84,15 @@ def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus l
         y_tour = hauteur_plateau 
         turtle.goto(x_tour , y_tour)
         turtle.pendown()
-        turtle.fillcolor("gray")
-        turtle.begin_fill()
         for i in range(2):
             turtle.forward(0)
             turtle.left(90)
             turtle.forward(hauteur_tour)
             turtle.left(90)
-        turtle.end_fill()
 
     turtle.hideturtle()
 
 # Sous fonction pour obtenir l'emplacement du disque dans la liste
-##def trouver_emplacement(element, plateau):
-##    for index, sous_liste in enumerate(plateau):
-##        if element in sous_liste:
-##            return [index , sous_liste.index(element)] # Renvoie l'indice de la sous-liste où l'élément est présent
-##    return None  # Renvoie None si l'élément n'est pas trouvé dans le plateau""
 
 #Fonction pour tracer le disque (ça marche pas à partir de turtle)
 
@@ -237,5 +229,6 @@ def boucleJeu(plateau,n):
     print(f"Victoire en {nb_coup} coups")
 
 
-
+plateau=init(3)
+boucleJeu(plateau,3)
 turtle.mainloop()
