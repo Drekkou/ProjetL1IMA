@@ -58,7 +58,7 @@ def verifVictoire(plateau,n):
 
 #Partie 2
 import turtle
-turtle.speed(10)
+turtle.speed(100)
     
 # Fonction pour dessiner le plateau avec trois tours
 def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus larges mais c'est plus chiant pour les tracer et pour la suite
@@ -179,36 +179,47 @@ def effaceTout(plateau,n):
 def lireCoords(plateau):
     while True:
         # Demande le numéro de la tour de départ
-        tour_depart = -1
-        while tour_depart not in [1,2,3] or len(plateau[tour_depart - 1]) == 0:
+        tour_depart = -2
+        while tour_depart not in [-1,1,2,3] or len(plateau[tour_depart - 1]) == 0:
             tour_depart = int(input("Entrez le numéro de la tour de départ (1, 2, 3) : "))
-            if tour_depart not in [1,2,3]:
+            if tour_depart==-1:
+                print("Vous avez choisis d'abandonner.")
+                tour_arrivee=None
+                break
+            elif tour_depart not in [1,2,3]:
                 print("Le numéro de la tour doit être entre 1 et 3.")
             elif len(plateau[tour_depart - 1]) == 0:
                 print("La tour de départ est vide. Choisissez une autre tour.")
 
         # Demande le numéro de la tour d'arrivée
-        tour_arrivee = int()
-        flag=True
-        while flag:
-            tour_arrivee = int(input("Entrez le numéro de la tour d'arrivée (1, 2, 3) : "))
-            if plateau[tour_arrivee-1]==[]:
-                flag = False
-            elif plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
-                flag = True
-            elif tour_arrivee in [1,2,3]:
-                flag = False
-            
-            if tour_arrivee not in [1,2,3]:
-                print("Le numéro de la tour doit être entre 1 et 3.")
-            elif len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
-                print("Le disque sélectionné ne peut pas être placé sur cette tour. Choisissez une autre tour.")
-
-        return tour_depart-1 , tour_arrivee-1
+        if not tour_depart==-1:
+            tour_arrivee = int()
+            flag=True
+            while flag:
+                tour_arrivee = int(input("Entrez le numéro de la tour d'arrivée (1, 2, 3) : "))
+                if plateau[tour_arrivee-1]==[]:
+                    flag = False
+                elif plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
+                    flag = True
+                elif tour_arrivee in [1,2,3]:
+                    flag = False
+                if tour_arrivee not in [1,2,3]:
+                    print("Le numéro de la tour doit être entre 1 et 3.")
+                elif len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
+                    print("Le disque sélectionné ne peut pas être placé sur cette tour. Choisissez une autre tour.")
+            tour_depart-=1
+            tour_arrivee-=1
+        else:
+            tour_depart=None
+        return tour_depart , tour_arrivee
 
 
 def jouerUnCoup(plateau,n):
     tour_depart,tour_arrivee=lireCoords(plateau)
+    if tour_depart ==None:
+        plateau=[]
+        return plateau
+    
     effaceDisque(plateau[tour_depart][-1],plateau,n)
     
     plateau[tour_arrivee].append(plateau[tour_depart][-1])
@@ -223,12 +234,26 @@ def boucleJeu(plateau,n):
     nb_coup=0
     dessinePlateau(n)
     dessineConfig(plateau,n)
-    while not verifVictoire(plateau,n):
+    flag=True
+    while flag and not verifVictoire(plateau,n) :
+        plateau=jouerUnCoup(plateau,n)
+        if plateau==[]:
+            flag=False
+            print(f"Vous avez abandonner après {nb_coup} coups")
         nb_coup+=1
-        jouerUnCoup(plateau,n)
-    print(f"Victoire en {nb_coup} coups")
+    if flag:
+        print(f"Victoire en {nb_coup} coups")
+
+def main():
+    n=int(input("Combien de disque souhaitez-vous?"))
+    plateau=init(n)
+    boucleJeu(plateau,n)
+    
+##main()
 
 
-plateau=init(3)
-boucleJeu(plateau,3)
+##Partie D
+
+def dernierCoup(dico):
+    
 turtle.mainloop()
