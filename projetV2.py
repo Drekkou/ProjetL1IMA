@@ -179,20 +179,25 @@ def effaceTout(plateau,n):
 def lireCoords(plateau):
     while True:
         # Demande le numéro de la tour de départ
-        tour_depart = -2
+        tour_depart = -3
         while tour_depart not in [-1,1,2,3] or len(plateau[tour_depart - 1]) == 0:
             tour_depart = int(input("Entrez le numéro de la tour de départ (1, 2, 3) : "))
             if tour_depart==-1:
                 print("Vous avez choisis d'abandonner.")
                 tour_arrivee=None
+                tour_depart=None
+                break
+            elif tour_depart==-2:
+                print("Vous avez annuler le dernier coup.")
+                tour_arrivee=-2
                 break
             elif tour_depart not in [1,2,3]:
                 print("Le numéro de la tour doit être entre 1 et 3.")
             elif len(plateau[tour_depart - 1]) == 0:
                 print("La tour de départ est vide. Choisissez une autre tour.")
-
+        
         # Demande le numéro de la tour d'arrivée
-        if not tour_depart==-1:
+        if tour_depart!=None and tour_depart!=-2:
             tour_arrivee = int()
             flag=True
             while flag:
@@ -207,25 +212,28 @@ def lireCoords(plateau):
                     print("Le numéro de la tour doit être entre 1 et 3.")
                 elif len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
                     print("Le disque sélectionné ne peut pas être placé sur cette tour. Choisissez une autre tour.")
-            tour_depart-=1
-            tour_arrivee-=1
-        else:
-            tour_depart=None
+            tour_depart=tour_depart-1
+            tour_arrivee=tour_arrivee-1
         return tour_depart , tour_arrivee
 
 
 def jouerUnCoup(plateau,n):
     tour_depart,tour_arrivee=lireCoords(plateau)
     if tour_depart ==None:
-        plateau=[]
-        return plateau
-    
-    effaceDisque(plateau[tour_depart][-1],plateau,n)
-    
-    plateau[tour_arrivee].append(plateau[tour_depart][-1])
-    plateau[tour_depart].pop()
-    
-    dessineDisque(plateau[tour_arrivee][-1], plateau, n)
+        plateau.clear()
+    elif tour_depart==-2:
+        return 1
+    else:
+        effaceDisque(plateau[tour_depart][-1],plateau,n)
+        
+        print(10,plateau)
+        
+        plateau[tour_arrivee]=plateau[tour_arrivee],plateau[tour_depart][-1]
+        ##plateau[tour_arrivee].append(plateau[tour_depart][-1])
+        print(11,plateau)
+        plateau[tour_depart].pop()
+        print(12,plateau)
+        dessineDisque(plateau[tour_arrivee][-1], plateau, n)
     
     return plateau
 
@@ -235,11 +243,28 @@ def boucleJeu(plateau,n):
     dessinePlateau(n)
     dessineConfig(plateau,n)
     flag=True
+    dico={}
+    coup=plateau[:]
+    print(1,dico)
     while flag and not verifVictoire(plateau,n) :
-        plateau=jouerUnCoup(plateau,n)
+        print("coup",nb_coup)
+        print(1,dico)
+        dico[nb_coup]=coup[:]
+        print(2,dico)
+        coup=jouerUnCoup(plateau,n)
+        print(3,dico,coup)
         if plateau==[]:
             flag=False
             print(f"Vous avez abandonner après {nb_coup} coups")
+        elif coup==1:
+            nb_coup=nb_coup-2
+            tour_depart,tour_arrivee=dernierCoup(dico)
+            effaceDisque(plateau[tour_depart][-1],plateau,n)
+        
+            plateau[tour_arrivee].append(plateau[tour_depart][-1])
+            plateau[tour_depart].pop()
+        
+            dessineDisque(plateau[tour_arrivee][-1], plateau, n)
         nb_coup+=1
     if flag:
         print(f"Victoire en {nb_coup} coups")
@@ -249,11 +274,35 @@ def main():
     plateau=init(n)
     boucleJeu(plateau,n)
     
-##main()
 
 
 ##Partie D
 
 def dernierCoup(dico):
+    print(dico)
+    clé=list(dico.keys())
+    print("aaaa",clé)
+    valeur=list(dico.values())
+    coup1=dico[clé[-1]]
+    coup2=dico[clé[len(clé)-3]]
+    print(coup1)
+    print(coup2)
+    changement=[]
+    for i in range(len(coup1)):
+        if not coup1[i]==coup2[i]:
+            changement.append(i)
+    if len(changement[0])<len(changement[1]):
+        tour_depart=changement[1]
+        tour_arrivee=changement[0]
+    else:
+        tour_depart=changement[0]
+        tour_arrivee=changement[1]
+    return tour_depart, tour_arrivee
+
+def annulerDernierCoup(dico):
+    clé=dico.keys()
+    dico.pop(clé[-1])
     
+
+main()
 turtle.mainloop()
