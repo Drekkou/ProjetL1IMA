@@ -58,7 +58,6 @@ def verifVictoire(plateau,n):
 
 #Partie 2
 import turtle
-turtle.speed(100)
     
 # Fonction pour dessiner le plateau avec trois tours
 def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus larges mais c'est plus chiant pour les tracer et pour la suite
@@ -174,7 +173,7 @@ def effaceTout(plateau,n):
 
   
 #Partie C
-
+import time
 #Fonction qui initialise l'emplacement des disques de départs et d'arrivé (j'ai pas pus tester pck j'arrive pas à tracer les disques
 def lireCoords(plateau):
     while True:
@@ -226,83 +225,148 @@ def jouerUnCoup(plateau,n):
     else:
         effaceDisque(plateau[tour_depart][-1],plateau,n)
         
-        print(10,plateau)
         
-        plateau[tour_arrivee]=plateau[tour_arrivee],plateau[tour_depart][-1]
-        ##plateau[tour_arrivee].append(plateau[tour_depart][-1])
-        print(11,plateau)
-        plateau[tour_depart].pop()
-        print(12,plateau)
+        liste_temporaire=plateau[tour_arrivee][:]
+        liste_temporaire.append(plateau[tour_depart][-1])
+        plateau[tour_arrivee]=liste_temporaire[:]
+        
+        liste_temporaire.clear()
+        
+        liste_temporaire=plateau[tour_depart][:]
+        liste_temporaire.pop()
+        plateau[tour_depart]=liste_temporaire[:]
         dessineDisque(plateau[tour_arrivee][-1], plateau, n)
     
     return plateau
 
 
-def boucleJeu(plateau,n):
+def boucleJeu(plateau,n,score):
+    temps_jeu=0
+    start=time.time()
     nb_coup=0
     dessinePlateau(n)
     dessineConfig(plateau,n)
     flag=True
+    continuer=True
     dico={}
-    coup=plateau[:]
-    print(1,dico)
+    dico[0]=plateau[:]
     while flag and not verifVictoire(plateau,n) :
-        print("coup",nb_coup)
-        print(1,dico)
-        dico[nb_coup]=coup[:]
-        print(2,dico)
         coup=jouerUnCoup(plateau,n)
-        print(3,dico,coup)
         if plateau==[]:
             flag=False
             print(f"Vous avez abandonner après {nb_coup} coups")
         elif coup==1:
-            nb_coup=nb_coup-2
+            nb_coup=nb_coup-1
             tour_depart,tour_arrivee=dernierCoup(dico)
-            effaceDisque(plateau[tour_depart][-1],plateau,n)
+            
+            
+            effaceDisque(plateau[tour_arrivee][-1],plateau,n)
         
-            plateau[tour_arrivee].append(plateau[tour_depart][-1])
-            plateau[tour_depart].pop()
         
-            dessineDisque(plateau[tour_arrivee][-1], plateau, n)
-        nb_coup+=1
+            liste_temporaire=plateau[tour_depart][:]
+            liste_temporaire.append(plateau[tour_arrivee][-1])
+            plateau[tour_depart]=liste_temporaire[:]
+            
+            liste_temporaire.clear()
+            
+            liste_temporaire=plateau[tour_arrivee][:]
+            liste_temporaire.pop()
+            plateau[tour_arrivee]=liste_temporaire[:]
+            dessineDisque(plateau[tour_depart][-1], plateau, n)
+            
+            
+            
+        else:
+            dico[nb_coup+1]=coup[:]
+            nb_coup+=1
     if flag:
         print(f"Victoire en {nb_coup} coups")
+        end=time.time()
+        temps_jeu=end-start
+        if input("Voullez vous enregistrer vôtre score? (o/n)")=="o":
+            print(1)
+            print(score)
+            score=sauvScore(n,nb_coup,score,temps_jeu)
+            print(score)
+
+
 
 def main():
-    n=int(input("Combien de disque souhaitez-vous?"))
-    plateau=init(n)
-    boucleJeu(plateau,n)
+    continuer=True
+    score={}
+    while continuer:
+        turtle.reset()
+        turtle.speed(100)
+        n=int(input("Combien de disque souhaitez-vous?"))
+        plateau=init(n)
+        boucleJeu(plateau,n,score)
+        continuer=(input("Voullez-vous rejouer?(o/n)")=="o")
     
 
 
 ##Partie D
 
 def dernierCoup(dico):
-    print(dico)
     clé=list(dico.keys())
-    print("aaaa",clé)
     valeur=list(dico.values())
     coup1=dico[clé[-1]]
-    coup2=dico[clé[len(clé)-3]]
-    print(coup1)
-    print(coup2)
+    coup2=dico[clé[len(clé)-2]]
     changement=[]
     for i in range(len(coup1)):
-        if not coup1[i]==coup2[i]:
-            changement.append(i)
-    if len(changement[0])<len(changement[1]):
-        tour_depart=changement[1]
-        tour_arrivee=changement[0]
-    else:
-        tour_depart=changement[0]
-        tour_arrivee=changement[1]
+        if len(coup1[i])<len(coup2[i]):
+            tour_depart=i
+        elif len(coup1[i])>len(coup2[i]):
+            tour_arrivee=i
     return tour_depart, tour_arrivee
 
 def annulerDernierCoup(dico):
     clé=dico.keys()
     dico.pop(clé[-1])
     
+##Partie E
 
-main()
+
+def sauvScore(nb_disques,nb_coups,score,temps):
+    nom_joueur=str(input("Quelle est vôtre nom? "))
+    clé=list(score.keys())
+    print("clé",clé)
+    score[len(clé)]=[nom_joueur,nb_coups,nb_disques,temps]
+    return score
+
+
+def afficheScores(score):
+    cle=list(score.keys())
+    valeur=list(score.values())
+    liste=[]
+    liste_temps=[]
+    for elt in cle:
+        liste.append([score[elt][1],elt])
+        liste_temps.append(score[elt][1])
+
+    liste_temps.sort()
+    for i in range(len(liste_temps)):
+        for j in range(len(liste)):
+            if liste[j][0]==liste_temps[i]:
+                print(cle[i]+1,valeur[i][0],valeur[i][1])
+                
+                
+def afficheChronos(score):
+    cle=list(score.keys())
+    valeur=list(score.values())
+    liste=[]
+    liste_temps=[]
+    for elt in cle:
+        liste.append([score[elt][3],elt])
+        liste_temps.append(score[elt][3])
+
+    liste_temps.sort()
+    for i in range(len(liste_temps)):
+        for j in range(len(liste)):
+            if liste[j][0]==liste_temps[i]:
+                print(cle[i]+1,valeur[i][0],round(float(valeur[i][3]),2))
+        
+score={0: ['Louis', 7, 3, 7.907096862792969], 1: ['dz', 8, 3, 16.681009769439697]}
+afficheChronos(score)
+
+##main()
 turtle.mainloop()
