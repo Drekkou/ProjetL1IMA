@@ -326,7 +326,6 @@ def sauvScore(nb_disques,nb_coups,score,temps):
     """Enregistre le score d'une partie."""
     nom_joueur=str(input("Quelle est vôtre nom? "))
     clé=list(score.keys())
-    print("clé",clé)
     score[len(clé)]=[nom_joueur,nb_coups,nb_disques,temps]
     return score
 
@@ -412,6 +411,7 @@ def hanoi(n, source, cible, auxiliaire, mouvements):
 def anime(mouvements,n):
     """Anime la résolution des tours de Hanoi."""
     turtle.speed(50)
+    turtle.reset()
     plat=init(n)
     dessinePlateau(n)
     dessineConfig(plat,n)
