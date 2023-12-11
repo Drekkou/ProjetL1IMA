@@ -441,12 +441,12 @@ def main():
     print("Les tours de Hanoi sont un jeu de réflexion consistant à déplacer des disques de différents diamétres, d'une tour de départ à une tour d'arrivée, en passant par une tour intermédiaire, en un minimum de coups, avec ces contraintes :\n  On ne peut déplacer qu'un seul disque à la fois \n  On ne peut pas placer un disque sur un disque plus petit que lui")
     while continuer:
         print("1.Jouer\n2.Afficher score\n3.Voir théorie\n4.Quitter")
-        entree=input("Que voullez-vous faire?(1/2/3/4)")
+        entree=input("Que voulez-vous faire?(1/2/3/4)")
         if entree=='1':
             turtle.reset()
             turtle.speed(100)
             n=int(input("Combien de disque souhaitez-vous?"))
-            print("Entrer -1 pour valeur de la tour de départ si vous voullez abandonner et -2 si vous voullez revenir 1 coup en arrière")
+            print("Entrer -1 pour valeur de la tour de départ si vous voulez abandonner et -2 si vous voulez revenir 1 coup en arrière")
             plateau=init(n)
             boucleJeu(plateau,n,score)
 
@@ -456,7 +456,7 @@ def main():
                 if score!={}:
                     print("1.Classement par score\n2.Classement par chronos\n3.Classement par rapidité")
                 
-                    entree2=input("Quel classement voullez-vous affichez? ")
+                    entree2=input("Quel classement voulez-vous affichez? ")
                     if entree2=="1":
                         afficheScores(score)
                     elif entree2=="2":
@@ -465,12 +465,12 @@ def main():
                         afficheTPC(score)
                     else:
                         print("Veuillez entrer 1 2 ou 3 comme valeur")
-                    oui=input("Voullez vous continuer à regarder les scores? (o/n)")=="o"
+                    oui=input("Voulez vous continuer à regarder les scores? (o/n)")=="o"
                 else:
                     print("Désolé aucune partie n'à encore était enregistrer")
                     oui=False
         elif entree=="3":
-            n=int(input("Combien de disque voullez-vous ?"))
+            n=int(input("Combien de disque voulez-vous ?"))
             mouvements=[]
             hanoi(n,1,3,2,mouvements)
             print(mouvements)
