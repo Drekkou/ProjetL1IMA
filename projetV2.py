@@ -1,4 +1,7 @@
+#coding: utf-8
 
+
+#Partie A
 
 def init(n):
     """Recoit en argument un entier n (le nombre de disques), et qui renvoie la liste représentant la configuration initiale du plateau"""
@@ -36,12 +39,14 @@ def posDisque(plateau, numdisque):
 
 
 def posDisque_edited(plateau, numdisque):
+    """Renvoie la position du disque dans le plateau (n-tour, n-position dans la tour)."""
     for i in plateau:
         for x in i:
             if numdisque == x:
                 return plateau.index(i), i.index(x)    #retourne d'abord la n-tour, et ensuite la n-position dans la tour
 
 def verifDepl(plateau, nt1, nt2):
+    """Vérifie si le déplacement entre les tours nt1 et nt2 est valide."""
     taille=plateau[nt1-1][len(plateau[nt1-1])-1]
     if plateau[nt2-1]==[]:
         return True
@@ -51,6 +56,7 @@ def verifDepl(plateau, nt1, nt2):
         return False
 
 def verifVictoire(plateau,n):
+    """Vérifie si la configuration actuelle du plateau est une victoire."""
     return plateau[2]==[i for i in range(n,0,-1)]
 
 
@@ -60,8 +66,9 @@ def verifVictoire(plateau,n):
 import turtle
     
 # Fonction pour dessiner le plateau avec trois tours
-def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus larges mais c'est plus chiant pour les tracer et pour la suite
-    largeur_plateau = 40+30*n        #Mais demandes moi si tu la veux
+def dessinePlateau(n):
+    """Dessine le plateau avec trois tours."""
+    largeur_plateau = 40+30*n        
     hauteur_plateau = 20
     hauteur_tour = 20*n+30
 
@@ -91,13 +98,10 @@ def dessinePlateau(n):              #J'en ai une autre qui fait des tours plus l
 
     turtle.hideturtle()
 
-# Sous fonction pour obtenir l'emplacement du disque dans la liste
-
-#Fonction pour tracer le disque (ça marche pas à partir de turtle)
 
 
-#fonction auxilière pour tracer/effacer les disques
 def dessineDisque(nd, plateau, n):
+    """Trace un disque sur le plateau."""
     #Dimension plateau
     largeur_plateau = 40+30*n
     hauteur_plateau = 20
@@ -124,10 +128,10 @@ def dessineDisque(nd, plateau, n):
     turtle.left(90)
     turtle.forward(hauteur_disque)
     turtle.left(90)
-  #Les autre choses demandées dans la partie 2 dépendent de la fonction qui marche pas donc j'ai pas pus faire
 
 def effaceDisque(nd,plateau,n):
-        #Dimension plateau
+    """Efface un disque du plateau."""
+    #Dimension plateau
     largeur_plateau = 40+30*n
     hauteur_plateau = 20
     hauteur_tour = 20*n+30
@@ -163,10 +167,12 @@ def effaceDisque(nd,plateau,n):
 
 
 def dessineConfig(plateau,n):
+    """Dessine la configuration actuelle du plateau."""
     for i in range(n):
         dessineDisque(i+1,plateau,n)
 
 def effaceTout(plateau,n):
+    """Efface tous les disques du plateau."""
     for i in range(n):
         effaceDisque(i+1,plateau,n)
 
@@ -174,8 +180,9 @@ def effaceTout(plateau,n):
   
 #Partie C
 import time
-#Fonction qui initialise l'emplacement des disques de départs et d'arrivé (j'ai pas pus tester pck j'arrive pas à tracer les disques
+#Fonction qui initialise l'emplacement des disques de départs et d'arrivé
 def lireCoords(plateau):
+    """Lit les coordonnées (tour de départ, tour d'arrivée) fournies par l'utilisateur."""
     while True:
         # Demande le numéro de la tour de départ
         tour_depart = -3
@@ -201,22 +208,24 @@ def lireCoords(plateau):
             flag=True
             while flag:
                 tour_arrivee = int(input("Entrez le numéro de la tour d'arrivée (1, 2, 3) : "))
-                if plateau[tour_arrivee-1]==[]:
-                    flag = False
-                elif plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
-                    flag = True
-                elif tour_arrivee in [1,2,3]:
-                    flag = False
                 if tour_arrivee not in [1,2,3]:
                     print("Le numéro de la tour doit être entre 1 et 3.")
                 elif len(plateau[tour_arrivee - 1]) > 0 and plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
                     print("Le disque sélectionné ne peut pas être placé sur cette tour. Choisissez une autre tour.")
+                else:
+                    if plateau[tour_arrivee-1]==[]:
+                        flag = False
+                    elif plateau[tour_arrivee - 1][-1] < plateau[tour_depart - 1][-1]:
+                        flag = True
+                    elif tour_arrivee in [1,2,3]:
+                        flag = False
             tour_depart=tour_depart-1
             tour_arrivee=tour_arrivee-1
         return tour_depart , tour_arrivee
 
 
 def jouerUnCoup(plateau,n):
+    """Joue un coup en déplaçant un disque d'une tour à une autre."""
     tour_depart,tour_arrivee=lireCoords(plateau)
     if tour_depart ==None:
         plateau.clear()
@@ -241,6 +250,7 @@ def jouerUnCoup(plateau,n):
 
 
 def boucleJeu(plateau,n,score):
+    """Boucle principale du jeu."""
     temps_jeu=0
     start=time.time()
     nb_coup=0
@@ -284,29 +294,14 @@ def boucleJeu(plateau,n,score):
         end=time.time()
         temps_jeu=end-start
         if input("Voullez vous enregistrer vôtre score? (o/n)")=="o":
-            print(1)
-            print(score)
             score=sauvScore(n,nb_coup,score,temps_jeu)
-            print(score)
 
-
-
-def main():
-    continuer=True
-    score={}
-    while continuer:
-        turtle.reset()
-        turtle.speed(100)
-        n=int(input("Combien de disque souhaitez-vous?"))
-        plateau=init(n)
-        boucleJeu(plateau,n,score)
-        continuer=(input("Voullez-vous rejouer?(o/n)")=="o")
-    
 
 
 ##Partie D
 
 def dernierCoup(dico):
+    """Renvoie les tours de départ et d'arrivée du dernier coup effectué."""
     clé=list(dico.keys())
     valeur=list(dico.values())
     coup1=dico[clé[-1]]
@@ -320,6 +315,7 @@ def dernierCoup(dico):
     return tour_depart, tour_arrivee
 
 def annulerDernierCoup(dico):
+    """Annule le dernier coup en retirant la configuration correspondante du dictionnaire."""
     clé=dico.keys()
     dico.pop(clé[-1])
     
@@ -327,6 +323,7 @@ def annulerDernierCoup(dico):
 
 
 def sauvScore(nb_disques,nb_coups,score,temps):
+    """Enregistre le score d'une partie."""
     nom_joueur=str(input("Quelle est vôtre nom? "))
     clé=list(score.keys())
     print("clé",clé)
@@ -335,6 +332,7 @@ def sauvScore(nb_disques,nb_coups,score,temps):
 
 
 def afficheScores(score):
+    """Affiche les scores en fonction du classement choisi."""
     cle=list(score.keys())
     valeur=list(score.values())
     liste=[]
@@ -351,6 +349,7 @@ def afficheScores(score):
                 
                 
 def afficheChronos(score):
+    """Affiche les scores en fonction du classement choisi."""
     cle=list(score.keys())
     valeur=list(score.values())
     liste=[]
@@ -364,9 +363,121 @@ def afficheChronos(score):
         for j in range(len(liste)):
             if liste[j][0]==liste_temps[i]:
                 print(cle[i]+1,valeur[i][0],round(float(valeur[i][3]),2))
-        
-score={0: ['Louis', 7, 3, 7.907096862792969], 1: ['dz', 8, 3, 16.681009769439697]}
-afficheChronos(score)
 
-##main()
-turtle.mainloop()
+
+
+def reflexionMoy(score,nom_joueur):
+    """Calcule la moyenne des chronos d'un joueur."""
+    valeur=list(score.values())
+    liste_joueur=[]
+    for elt in valeur:
+        if elt[0]==nom_joueur:
+            liste_joueur.append([elt[1],elt[3]])
+    
+    moy=0
+    for elt in liste_joueur:
+        moy+=elt[1]/elt[0]
+    moy=moy/len(liste_joueur)
+    
+    return moy
+
+def afficheTPC(score):
+    """Affiche le classement par rapidité."""
+    valeur=list(score.values())
+    liste_moy=[]
+    for elt in valeur:
+        a=[elt[0],round(reflexionMoy(score,elt[0]),2)]
+        if  a not in liste_moy:
+            liste_moy.append(a)
+    
+    
+    liste_temps=[liste_moy[i][1] for i in range(len(liste_moy))]
+    liste_temps.sort()
+    for i in range(len(liste_temps)):
+        print(i+1,liste_moy[i][0],liste_temps[i])
+    
+def hanoi(n, source, cible, auxiliaire, mouvements):
+    """Implémente l'algorithme de résolution du problème des tours de Hanoi."""
+    if n > 0:
+        # Déplacer n - 1 disques de la source à l'auxiliaire en utilisant la cible comme tampon
+        hanoi(n - 1, source, auxiliaire, cible, mouvements)
+        
+        # Déplacer le disque restant de la source vers la cible
+        mouvements.append((source, cible))
+        
+        # Déplacer les n - 1 disques de l'auxiliaire vers la cible en utilisant la source comme tampon
+        hanoi(n - 1, auxiliaire, cible, source, mouvements)
+        
+
+def anime(mouvements,n):
+    """Anime la résolution des tours de Hanoi."""
+    turtle.speed(50)
+    plat=init(n)
+    dessinePlateau(n)
+    dessineConfig(plat,n)
+    for elt in mouvements:
+        effaceDisque(plat[elt[0]-1][-1],plat,n)
+        
+        
+        liste_temporaire=plat[elt[1]-1][:]
+        liste_temporaire.append(plat[elt[0]-1][-1])
+        plat[elt[1]-1]=liste_temporaire[:]
+        
+        liste_temporaire.clear()
+        
+        liste_temporaire=plat[elt[0]-1][:]
+        liste_temporaire.pop()
+        plat[elt[0]-1]=liste_temporaire[:]
+        dessineDisque(plat[elt[1]-1][-1], plat, n)
+    turtle.speed(100)
+
+
+def main():
+    """Fonction principale du programme."""
+    continuer=True
+    score={}
+    print("Bienvenue dans les Tour d'Hanoi")
+    print("Voici les règles:")
+    print("Les tours de Hanoi sont un jeu de réflexion consistant à déplacer des disques de différents diamétres, d'une tour de départ à une tour d'arrivée, en passant par une tour intermédiaire, en un minimum de coups, avec ces contraintes :\n  On ne peut déplacer qu'un seul disque à la fois \n  On ne peut pas placer un disque sur un disque plus petit que lui")
+    while continuer:
+        print("1.Jouer\n2.Afficher score\n3.Voir théorie\n4.Quitter")
+        entree=input("Que voullez-vous faire?(1/2/3/4)")
+        if entree=='1':
+            turtle.reset()
+            turtle.speed(100)
+            n=int(input("Combien de disque souhaitez-vous?"))
+            print("Entrer -1 pour valeur de la tour de départ si vous voullez abandonner et -2 si vous voullez revenir 1 coup en arrière")
+            plateau=init(n)
+            boucleJeu(plateau,n,score)
+
+        elif entree=='2':
+            oui=True
+            while oui:
+                if score!={}:
+                    print("1.Classement par score\n2.Classement par chronos\n3.Classement par rapidité")
+                
+                    entree2=input("Quel classement voullez-vous affichez? ")
+                    if entree2=="1":
+                        afficheScores(score)
+                    elif entree2=="2":
+                        afficheChronos(score)
+                    elif entree2=="3":
+                        afficheTPC(score)
+                    else:
+                        print("Veuillez entrer 1 2 ou 3 comme valeur")
+                    oui=input("Voullez vous continuer à regarder les scores? (o/n)")=="o"
+                else:
+                    print("Désolé aucune partie n'à encore était enregistrer")
+                    oui=False
+        elif entree=="3":
+            n=int(input("Combien de disque voullez-vous ?"))
+            mouvements=[]
+            hanoi(n,1,3,2,mouvements)
+            print(mouvements)
+            anime(mouvements,n)
+        elif entree=="4":
+            print("Au revoir")
+            continuer=False
+            
+# Exécution du programme
+main()
